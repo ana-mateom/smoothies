@@ -3,7 +3,7 @@ import OneSignal from 'react-onesignal';
 
 let oneSignalInitialized = false;
 
-export default async function runOneSignal() {
+export default async function runOneSignal(userId) {
   console.log("init");
   if (oneSignalInitialized) {
     return
@@ -18,6 +18,7 @@ export default async function runOneSignal() {
     allowLocalhostAsSecureOrigin: true
 });
     console.log("hola");
+    await OneSignal.setExternalUserId(userId)
  // OneSignal.Slidedown.promptPush();
 }
 

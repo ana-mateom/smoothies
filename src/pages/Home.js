@@ -14,57 +14,22 @@ const Home = () => {
   const [user, setUser] = useState(null); // State to store user information
   const navigate = useNavigate();
 
-  useEffect(() => {
-    runOneSignal();
-  })
-  //const oneSignalInitialized = useRef(false); // useRef to track OneSignal initialization
-
-  /*If you're unsure about the initialization state, you can check if OneSignal 
-  is ready or wait for the OneSignal.on('initialized', () => {}) event if available in your SDK version.*/
-
- /* 
-*/
 
 
-
-// const oneSignalAppId = "b9c41c33-8196-4883-a129-21ce0ce5df41"
-
-
-
-//   //const [user, setUser] = useState<User | null>(null)
-
-//   const [oneSignalInitialized, setOneSignalInitialized] = useState(false)
-
-//   /**
-//    * Initializes OneSignal SDK for a given Supabase User ID
-//    * @param uid Supabase User ID
-//    */
-//   const initializeOneSignal = async () => {
-//     if (oneSignalInitialized) {
-//       return
-//     }
-//     setOneSignalInitialized(true)
-//     await OneSignal.init({
-//       appId: oneSignalAppId,
-//       notifyButton: {
-//         enable: true,
-//       },
-
-//       allowLocalhostAsSecureOrigin: true,
-//     })
-
-//    // await OneSignal.setExternalUserId(uid)
-//   }
 
   // Fetch user information from Supabase
   useEffect(() => {
     const fetchUser = async () => {
+      console.log("hola1");
       try {
         const { data, error } = await supabase.auth.getUser();
+        console.log("hola4");
         if (error) {
           setFetchError("Error fetching user: " + error.message);
         } else {
+          console.log("Hola3");
           setUser(data);
+          console.log("hola2");
          // initializeOneSignal(); // Call initializeOneSignal function
           console.log("User Data:", user.user); // Print user data to console
          try {
@@ -72,6 +37,7 @@ const Home = () => {
               .from("User_Smoothies")
               .update({ logged_in: true })
               .eq("user_id", user.user.id);
+
           } catch (error) {
             console.error("Error updating logged_in status:", error.message);
           }
@@ -83,6 +49,13 @@ const Home = () => {
 
     fetchUser();
   },[]);
+
+  useEffect(() => {
+    if(user) {
+      runOneSignal(user.user.id);
+    }
+    
+  })
 
   const isSubscribed = (smoothieId) => {
     return subscribedSmoothies.includes(smoothieId);
@@ -96,6 +69,7 @@ useEffect(() => {
           .from('User_Smoothies')
           .select('smoothie_id')
           .eq('user_id', user.user.id);
+          
 
         if (error) {
           throw error;
